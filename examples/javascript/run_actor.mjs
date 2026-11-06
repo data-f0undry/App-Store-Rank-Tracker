@@ -1,17 +1,12 @@
-// JavaScript / TypeScript - official apify-client
+// JavaScript / TypeScript - official apify-client. Reads input.json.
+import { readFileSync } from 'node:fs';
 import { ApifyClient } from 'apify-client';
 
+const ACTOR = 'data_foundry/aso-app-rank-tracker';
+const runInput = JSON.parse(readFileSync('input.json', 'utf8'));
+
 const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
-const run = await client.actor('data_foundry/aso-app-rank-tracker').call({
-    "apps": [
-        "389801252",
-        {
-            "id": "310633997",
-            "country": "gb"
-        }
-    ],
-    "trackCharts": true
-});
+const run = await client.actor(ACTOR).call(runInput);
 console.log('dataset:', run.defaultDatasetId);
 
 const { items } = await client.dataset(run.defaultDatasetId).listItems();

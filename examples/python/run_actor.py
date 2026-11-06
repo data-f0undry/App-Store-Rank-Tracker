@@ -1,18 +1,15 @@
-"""Python - official apify-client."""
+"""Python - official apify-client. Reads input.json from the repo root."""
+import json
 import os
+from pathlib import Path
+
 from apify_client import ApifyClient
 
+ACTOR = "data_foundry/aso-app-rank-tracker"
+run_input = json.loads(Path("input.json").read_text(encoding="utf-8"))
+
 client = ApifyClient(os.environ["APIFY_TOKEN"])
-run = client.actor("data_foundry/aso-app-rank-tracker").call(run_input={
-    "apps": [
-        "389801252",
-        {
-            "id": "310633997",
-            "country": "gb"
-        }
-    ],
-    "trackCharts": true
-})
+run = client.actor(ACTOR).call(run_input=run_input)
 print("dataset:", run["defaultDatasetId"])
 for item in client.dataset(run["defaultDatasetId"]).iterate_items():
     print(item)
